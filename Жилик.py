@@ -1,4 +1,5 @@
 import sympy as sympy
+from numpy import linspace
 from sympy.calculus.util import maximum, minimum
 
 
@@ -10,6 +11,16 @@ def maximum_function_on_diff(f_x, symbol_x, number, distance):  # Ищет ма�
     if diff_func_max < diff_func_min:                       # Это на тот случай если минимум оказался больше
         diff_func_max = diff_func_min
 
+    return diff_func_max
+
+
+def maximum_function_on_diff_2_list(f_x, symbol_x, a, b):
+    diff_func = sympy.diff(f_x, symbol_x, 2)
+    x_linear = linspace(a, b, 10000)
+    diff_func_list = [diff_func.subs(sympy.Symbol('x'), x_linear[i]) for i in range(10000)]
+    diff_func_max = max(diff_func_list)
+    diff_func_min = min(diff_func_list)
+    diff_func_max = diff_func_max if diff_func_max > diff_func_min else diff_func_min
     return diff_func_max
 
 
@@ -48,7 +59,7 @@ Integral_function_new = h * (first_sum + next_sums)
 print("Значение интеграла:", Integral_function_new)
 print("Ошибка составила", abs(Integral_function - Integral_function_new))
 
-M_2 = maximum_function_on_diff(function, x, 2, interval)  # Находим вторую производную
+M_2 = float(maximum_function_on_diff(function, x, 2, interval)) # Находим вторую производную
 
 Rh = (-(b - a) / 12) * (M_2 * h**2)                     # По формуле
 print("Остаточный член R(h):", Rh, "\n")
@@ -172,24 +183,25 @@ print("Остаточный член R(h):", sympy.N(Rh), "\n")
 print("Количество точек: ", n)
 print("Взят шаг h = ", h)
 
-# Первое задание правильно. Дальше пока не уверен.
+
 print("-------------------Интеграл методом трапеций с уменьшением шага-------------------------")
 
 print("Значение исходного интеграла =", Integral_function)
 
-Epsilon = pow(10, -6)
-print("Epsilon = ", Epsilon)
+Epsilon = 0.001
+print("Epsilon = ", Epsilon, "\n")
 
 while True:
-    Rh = (b - a) / 12 * M_2 * h * h
-    if abs(Rh) < Epsilon:
-        break
     h -= 0.001
     n = int(round((b - a) / h))
     nodes = [a]
     for i in range(1, n + 1):
         nodes.append(nodes[i - 1] + h)
-    Rh = 0
+    if abs(b - nodes[n]) > pow(10, -5):
+        continue
+    Rh = (b - a) / 12 * M_2 * h * h
+    if abs(Rh) < Epsilon:
+        break
 
 y0 = sympy.N(function.subs(x, nodes[0]))               # Подставляем в функцию границы a и b
 yn = sympy.N(function.subs(x, nodes[n]))
@@ -210,6 +222,7 @@ print("Взят шаг h = ", h)
 print("----------------Интеграл методом трапеций с уменьшением интервала---------------------")
 
 n = 10
+Epsilon = 0.0001
 
 h = (b - a) / n
 nodes = [a]
@@ -247,7 +260,8 @@ while True:
     if abs(Integral_function_new_2 - Integral_function_new) <= Epsilon:
         break
 
-print("Значение полученного интеграла:", Integral_function_new)
+print("Epsilon = ", Epsilon)
+print("\nЗначение полученного интеграла:", Integral_function_new)
 print("Ошибка составила", abs(Integral_function - Integral_function_new))
 
 print("Остаточный член R(h):", Rh, "\n")
