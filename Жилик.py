@@ -1,5 +1,4 @@
 import sympy as sympy
-from numpy import linspace
 from sympy.calculus.util import maximum, minimum
 
 
@@ -11,16 +10,6 @@ def maximum_function_on_diff(f_x, symbol_x, number, distance):  # Ищет ма�
     if diff_func_max < diff_func_min:                       # Это на тот случай если минимум оказался больше
         diff_func_max = diff_func_min
 
-    return diff_func_max
-
-
-def maximum_function_on_diff_2_list(f_x, symbol_x, a, b):
-    diff_func = sympy.diff(f_x, symbol_x, 2)
-    x_linear = linspace(a, b, 10000)
-    diff_func_list = [diff_func.subs(sympy.Symbol('x'), x_linear[i]) for i in range(10000)]
-    diff_func_max = max(diff_func_list)
-    diff_func_min = min(diff_func_list)
-    diff_func_max = diff_func_max if diff_func_max > diff_func_min else diff_func_min
     return diff_func_max
 
 
@@ -266,3 +255,4 @@ print("Ошибка составила", abs(Integral_function - Integral_functi
 
 print("Остаточный член R(h):", Rh, "\n")
 print("Взят шаг h = ", h)
+
